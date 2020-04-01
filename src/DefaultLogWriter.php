@@ -4,7 +4,6 @@ namespace Spatie\HttpLogger;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,14 +19,14 @@ class DefaultLogWriter implements LogWriter
         $bodyAsJson = json_encode($request->except(config('http-logger.except')));
 
         $files = (new Collection(iterator_to_array($request->files)))
-        ->map([$this, 'flatFiles'])
-        ->flatten()
-        ->implode(',');
+            ->map([$this, 'flatFiles'])
+            ->flatten()
+            ->implode(',');
 
         $message = "{$method} {$uri} - RequestBody: {$bodyAsJson} - Files: " . $files;
 
         if (config('http-logger.auth_user_id', false)) {
-            $message .= "UserId: ".Auth::id()."-";
+            $message .= 'UserId: ' . auth()->id() . ' - ';
         }
 
         if (config('http-logger.log_response', false)) {
