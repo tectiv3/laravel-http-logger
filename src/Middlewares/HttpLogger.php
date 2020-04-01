@@ -4,6 +4,7 @@ namespace Spatie\HttpLogger\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Spatie\HttpLogger\LogWriter;
 use Spatie\HttpLogger\LogProfile;
 
@@ -18,12 +19,15 @@ class HttpLogger
         $this->logWriter = $logWriter;
     }
 
-    public function handle(Request $request, Closure $next)
+    public function handle($request, Closure $next)
+    {
+        return $next($request);
+    }
+
+    public function terminate(Request $request, Response $response)
     {
         if ($this->logProfile->shouldLogRequest($request)) {
-            $this->logWriter->logRequest($request);
+            $this->logWriter->logRequestResponse($request, $response);
         }
-
-        return $next($request);
     }
 }

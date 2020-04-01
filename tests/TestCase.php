@@ -3,6 +3,7 @@
 namespace Spatie\HttpLogger\Test;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Route;
@@ -68,7 +69,7 @@ class TestCase extends Orchestra
 
     protected function getEnvironmentSetUp($app)
     {
-        $app->config->set('logging.channels.single', [
+        $app->config->set('logging.channels.httplogger', [
             'driver' => 'single',
             'path' => $this->getLogFile(),
             'level' => 'debug',
@@ -108,5 +109,12 @@ class TestCase extends Orchestra
                 $cookies, $files, array_replace($this->serverVariables, $server), $content
             )
         );
+    }
+
+    protected function makeResponse(Request $request, $content): Response
+    {
+        $response = new Response($content);
+
+        return $response->prepare($request);
     }
 }
