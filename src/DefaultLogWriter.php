@@ -18,23 +18,24 @@ class DefaultLogWriter implements LogWriter
 
         $bodyAsJson = json_encode($request->except(config('http-logger.except')));
 
-        $files = (new Collection(iterator_to_array($request->files)))
-            ->map([$this, 'flatFiles'])
-            ->flatten()
-            ->implode(',');
+        // $files = (new Collection(iterator_to_array($request->files)))
+        //     ->map([$this, 'flatFiles'])
+        //     ->flatten()
+        //     ->implode(',');
 
-        $message = "{$method} {$uri} - RequestBody: {$bodyAsJson} - Files: " . $files;
+        $message = "{$method} {$uri}"; //" - RequestBody: {$bodyAsJson} - Files: " . $files;
 
-        if (config('http-logger.auth_user_id', false)) {
-            $message .= 'UserId: ' . auth()->id() . ' - ';
+        if (config('http-logger.auth_user_id', false) && auth()->id()) {
+            $message .= ' { "user": ' . auth()->id() . ' }';
         }
 
         if (config('http-logger.log_response', false)) {
-            $responseBodyAsJson = $response->getContent();
+            // $responseBodyAsJson = $response->getContent();
             $statusCode = $response->getStatusCode();
-            $responseHeaderAsJson = json_encode($response->headers);
+            // $responseHeaderAsJson = json_encode($response->headers);
 
-            $message .= "HttpStatus: $statusCode - ResponseBody: $responseBodyAsJson - Header: $responseHeaderAsJson";
+            // $message .= "HttpStatus: $statusCode - ResponseBody: $responseBodyAsJson - Header: $responseHeaderAsJson";
+            $message .= " $statusCode";
         }
 
         Log::channel('httplogger')->info($message);
