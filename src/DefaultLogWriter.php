@@ -38,7 +38,7 @@ class DefaultLogWriter implements LogWriter
             $message .= " $statusCode";
         }
 
-        Log::channel('httplogger')->info($message);
+        Log::info($message);
     }
 
     public function flatFiles($file)
