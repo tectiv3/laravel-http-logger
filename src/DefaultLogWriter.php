@@ -37,7 +37,10 @@ class DefaultLogWriter implements LogWriter
             // $message .= "HttpStatus: $statusCode - ResponseBody: $responseBodyAsJson - Header: $responseHeaderAsJson";
             $message .= " $statusCode";
         }
-
+        if (function_exists('log_info')) {
+            log_info($message);
+            return;
+        }
         Log::info($message);
     }
 
