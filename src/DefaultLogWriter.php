@@ -24,24 +24,23 @@ class DefaultLogWriter implements LogWriter
         //     ->implode(',');
 
         $message = "{$method} {$uri}"; //" - RequestBody: {$bodyAsJson} - Files: " . $files;
-
-        if (config('http-logger.auth_user_id', false) && auth()->id()) {
-            $message .= ' { "user": ' . auth()->id() . ' }';
+        $context = [];
+        if (config('http-logger.log_request_body', false)) {
+            $context['request'] = $bodyAsJson;
         }
-
+        if (config('http-logger.auth_user_id', false) && auth()->id()) {
+            $context['user'] = auth()->id();
+        }
         if (config('http-logger.log_response', false)) {
-            // $responseBodyAsJson = $response->getContent();
             $statusCode = $response->getStatusCode();
-            // $responseHeaderAsJson = json_encode($response->headers);
-
-            // $message .= "HttpStatus: $statusCode - ResponseBody: $responseBodyAsJson - Header: $responseHeaderAsJson";
             $message .= " $statusCode";
         }
-        if (function_exists('log_info')) {
-            log_info($message);
-            return;
+        if (config('http-logger.log_response_body', false)) {
+            $context['response'] = $response->getContent();
+            $context['headers'] = json_encode($response->headers);
         }
-        Log::info($message);
+
+        Log::info($message, $context);
     }
 
     public function flatFiles($file)
