@@ -25,7 +25,7 @@ return [
     /*
      * The log response is an options to decide log response or not
      */
-    'log_response' => env('HTTPLOGGER_RESPONSE', true),,
+    'log_response' => env('HTTPLOGGER_RESPONSE', true),
     'log_response_body' => env('HTTPLOGGER_RESPONSE_BODY', false),
     'log_request_body' => env('HTTPLOGGER_REQUEST_BODY', false),
 
