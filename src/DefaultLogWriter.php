@@ -16,8 +16,6 @@ class DefaultLogWriter implements LogWriter
 
         $uri = $request->getPathInfo();
 
-        $bodyAsJson = json_encode($request->except(config('http-logger.except')));
-
         // $files = (new Collection(iterator_to_array($request->files)))
         //     ->map([$this, 'flatFiles'])
         //     ->flatten()
@@ -26,7 +24,7 @@ class DefaultLogWriter implements LogWriter
         $message = "{$method} {$uri}"; //" - RequestBody: {$bodyAsJson} - Files: " . $files;
         $context = [];
         if (config('http-logger.log_request_body', false)) {
-            $context['request'] = $bodyAsJson;
+            $context['request'] = $request->except(config('http-logger.except'));
         }
         if (config('http-logger.auth_user_id', false) && auth()->id()) {
             $context['user'] = auth()->id();
