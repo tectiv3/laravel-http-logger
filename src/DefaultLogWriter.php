@@ -37,8 +37,11 @@ class DefaultLogWriter implements LogWriter
             $context['response'] = $response->getContent();
             $context['headers'] = json_encode($response->headers);
         }
-
-        Log::info($message, $context);
+        if ($method === 'GET') {
+            Log::debug($message, $context);
+        } else {
+            Log::info($message, $context);
+        }
     }
 
     public function flatFiles($file)
